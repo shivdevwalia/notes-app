@@ -10,22 +10,32 @@ noteRouter.post("/create", async (req, res) => {
   res.send({ msg: "Note Created" });
 });
 
+// noteRouter.get("/", async (req, res) => {
+//   try {
+//     const token = req.headers.authorization;
+//     if (!token) {
+//       return res.status(401).send({ msg: "Unauthorized: No token provided" });
+//     }
+
+//     // Verify and decode token
+//     const decoded = jwt.verify(token, "masai"); // Use your secret here
+//     const userID = decoded.userID;
+//     console.log(userID);
+//     // Find notes for this user
+//     const notes = await NoteModel.find({ user: userID });
+//     res.send(notes);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ msg: "Server error" });
+//   }
+// });
 noteRouter.get("/", async (req, res) => {
   try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).send({ msg: "Unauthorized: No token provided" });
-    }
-
-    // Verify and decode token
-    const decoded = jwt.verify(token, "masai"); // Use your secret here
-    const userID = decoded.userID;
-    console.log(userID);
-    // Find notes for this user
+    const userID = req.user; // This is set by the authenticate middleware
     const notes = await NoteModel.find({ user: userID });
     res.send(notes);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching notes:", err);
     res.status(500).send({ msg: "Server error" });
   }
 });
